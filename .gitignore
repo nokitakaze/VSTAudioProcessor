@@ -1,0 +1,7 @@
+/.idea
+*.DotSettings.user
+
+# bin & obj
+/VSTAudioProcessor/bin
+/VSTAudioProcessor/obj
+

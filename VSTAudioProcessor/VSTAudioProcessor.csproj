@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <LangVersion>7.3</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CommandLineParser" Version="2.7.82" />
+    </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Jacobi.Vst.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\vst.net\Source\Code\_SharedAssemblies\Jacobi.Vst.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Jacobi.Vst.Interop, Version=0.6.0.0, Culture=neutral, PublicKeyToken=fa678e13c1efc859, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vst.net\Source\_SharedAssemblies\Jacobi.Vst.Interop.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
