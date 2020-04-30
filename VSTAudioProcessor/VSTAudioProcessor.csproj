@@ -66,6 +66,9 @@
         <Compile Include="InvisibleForm.Designer.cs">
           <DependentUpon>InvisibleForm.cs</DependentUpon>
         </Compile>
+        <Compile Include="Process\ByteReader.cs" />
+        <Compile Include="Process\FxbReader.cs" />
+        <Compile Include="Process\VSTProcessing.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs">
             <SubType>Code</SubType>

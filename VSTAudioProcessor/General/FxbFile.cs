@@ -11,5 +11,8 @@ namespace VSTAudioProcessor.General
         public const string FxbHeader_Preset_Opaque = "FPCh";
         public const string FxbHeader_Bank_Param = "FxBk";
         public const string FxbHeader_Bank_Opaque = "FBCh";
+
+        public const int PresetNameLength = 28;
+        public const int FxbReservedLength = 124;
     }
 }

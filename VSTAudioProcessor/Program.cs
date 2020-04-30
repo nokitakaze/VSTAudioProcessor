@@ -2,6 +2,7 @@
 using System.Threading;
 using CommandLine;
 using VSTAudioProcessor.Dialog;
+using VSTAudioProcessor.Process;
 
 namespace VSTAudioProcessor
 {
@@ -31,10 +32,11 @@ namespace VSTAudioProcessor
         private static void RunOptionsAndReturnExitCode(VSTAudioProcessor.General.CallParameters parameters)
         {
             Console.CancelKeyPress += consoleCtrlC;
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (!parameters.SaveFxbFile)
             {
                 // Обрабатываем wave-файл
-                // TODO
+                returnCode = VSTProcessing.ProcessWaveFile(parameters, CancellationTokenSource.Token);
             }
             else
             {

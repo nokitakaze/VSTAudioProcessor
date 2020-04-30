@@ -6,3 +6,7 @@
 # bin & obj
 /VSTAudioProcessor/bin
 /VSTAudioProcessor/obj
+
+/VSTAudioProcessor.Test/bin
+/VSTAudioProcessor.Test/obj
+

@@ -28,6 +28,9 @@ namespace VSTAudioProcessor.Dialog
         // ReSharper disable once UnusedMember.Local
         private const string FxbHeader_Bank_Opaque = FxbFile.FxbHeader_Bank_Opaque;
 
+        private const int PresetNameLength = FxbFile.PresetNameLength;
+        private const int FxbReservedLength = FxbFile.FxbReservedLength;
+
         public static int SetUpPlugin(
             CallParameters parameters,
             System.Threading.CancellationToken cancellationToken
@@ -128,7 +131,7 @@ namespace VSTAudioProcessor.Dialog
 
         #region Generate Binary data
 
-        private static int SaveStateAsFxb(
+        public static int SaveStateAsFxb(
             string outputFilename,
             byte[] saveState,
             float[] vstParameters,
@@ -157,7 +160,7 @@ namespace VSTAudioProcessor.Dialog
             return 0;
         }
 
-        private static int SaveStateAsFxp(
+        public static int SaveStateAsFxp(
             string outputFilename,
             byte[] saveState,
             float[] vstParameters,
@@ -202,14 +205,14 @@ namespace VSTAudioProcessor.Dialog
             if (isOpaque)
             {
                 fxpDataSubList.AddRange(WriteUint32(0)); // Num Params
-                fxpDataSubList.AddRange(WriteZeroBytes(28)); // Preset name
+                fxpDataSubList.AddRange(WriteZeroBytes(PresetNameLength)); // Preset name
                 fxpDataSubList.AddRange(WriteUint32((uint) saveState.Length)); // Num Params
                 fxpDataSubList.AddRange(saveState);
             }
             else
             {
                 fxpDataSubList.AddRange(WriteUint32((uint) vstParameters.Length)); // Num Params
-                fxpDataSubList.AddRange(WriteZeroBytes(28)); // Preset name
+                fxpDataSubList.AddRange(WriteZeroBytes(PresetNameLength)); // Preset name
 
                 foreach (var value in vstParameters)
                 {
@@ -251,7 +254,7 @@ namespace VSTAudioProcessor.Dialog
             var fxbDataSubList = new List<byte>();
             fxbDataSubList.AddRange(WriteUint32(1)); // Num programs
             fxbDataSubList.AddRange(WriteUint32(0)); // Current programs
-            fxbDataSubList.AddRange(WriteZeroBytes(124)); // Num Params
+            fxbDataSubList.AddRange(WriteZeroBytes(FxbReservedLength)); // Num Params
             fxbDataSubList.AddRange(fxpData);
 
             var fxbDataList = new List<byte>();

@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTAudioProcessor", "VSTAudioProcessor\VSTAudioProcessor.csproj", "{34D381DB-0776-4281-B627-0728A4B209D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTAudioProcessor.Test", "VSTAudioProcessor.Test\VSTAudioProcessor.Test.csproj", "{27EC8670-0C6D-4950-BE3C-2C12D9E2BC19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{34D381DB-0776-4281-B627-0728A4B209D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34D381DB-0776-4281-B627-0728A4B209D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34D381DB-0776-4281-B627-0728A4B209D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27EC8670-0C6D-4950-BE3C-2C12D9E2BC19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27EC8670-0C6D-4950-BE3C-2C12D9E2BC19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27EC8670-0C6D-4950-BE3C-2C12D9E2BC19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27EC8670-0C6D-4950-BE3C-2C12D9E2BC19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
