@@ -15,21 +15,18 @@ namespace VSTAudioProcessor.Dialog
     /// <summary>
     /// 
     /// </summary>
-    /// <url>
-    /// https://forum.cockos.com/showthread.php?t=45198
-    /// </url>
     public static class VSTSettings
     {
         private const int ReturnCodeOffset = 100;
         private static InvisibleForm form;
-        private const string FxbFileMagicHeader = "CcnK";
+        private const string FxbFileMagicHeader = FxbFile.FxbFileMagicHeader;
 
-        private const string FxbHeader_Preset_Param = "FxCk";
-        private const string FxbHeader_Preset_Opaque = "FPch";
-        private const string FxbHeader_Bank_Param = "FxBk";
+        private const string FxbHeader_Preset_Param = FxbFile.FxbHeader_Preset_Param;
+        private const string FxbHeader_Preset_Opaque = FxbFile.FxbHeader_Preset_Opaque;
+        private const string FxbHeader_Bank_Param = FxbFile.FxbHeader_Bank_Param;
 
         // ReSharper disable once UnusedMember.Local
-        private const string FxbHeader_Bank_Opaque = "FBCh";
+        private const string FxbHeader_Bank_Opaque = FxbFile.FxbHeader_Bank_Opaque;
 
         public static int SetUpPlugin(
             CallParameters parameters,
@@ -292,8 +289,6 @@ namespace VSTAudioProcessor.Dialog
 
         private static byte[] WriteFloat(float value)
         {
-            // TODO: check if float in LE
-
             return BitConverter.GetBytes(value).Reverse().ToArray();
         }
 

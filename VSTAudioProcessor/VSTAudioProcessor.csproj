@@ -59,6 +59,7 @@
     <ItemGroup>
         <Compile Include="Dialog\VSTSettings.cs" />
         <Compile Include="General\CallParameters.cs" />
+        <Compile Include="General\FxbFile.cs" />
         <Compile Include="InvisibleForm.cs">
           <SubType>Form</SubType>
         </Compile>
@@ -76,6 +77,9 @@
         </Compile>
         <Compile Include="VstSubClasses\HostCommandStub.cs" />
         <Compile Include="VstSubClasses\PluginCalledEventArgs.cs" />
+        <EmbeddedResource Include="InvisibleForm.resx">
+          <DependentUpon>InvisibleForm.cs</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Include="Properties\Resources.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -5,7 +5,7 @@ using VSTAudioProcessor.Dialog;
 
 namespace VSTAudioProcessor
 {
-    internal class Program
+    internal static class Program
     {
         public static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
         private static int returnCode;
