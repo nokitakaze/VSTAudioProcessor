@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using AudioLib;
 using Jacobi.Vst.Core;
 using Jacobi.Vst.Core.Host;
 using Jacobi.Vst.Interop.Host;
+using NokitaKaze.WAVParser;
 using VSTAudioProcessor.General;
 using VSTAudioProcessor.VstSubClasses;
 
@@ -150,32 +150,23 @@ namespace VSTAudioProcessor.Process
         {
             var isDoublePrecision = pluginContext.PluginInfo.Flags.HasFlag(VstPluginFlags.CanDoubleReplacing);
 
-            MemoryStream inputStream;
-            MemoryStream outputStream = new MemoryStream();
+            var pcmInput = new WAVParser(inputFile);
+            var pcmOutput = new WAVParser
             {
-                inputStream = new MemoryStream();
-                var bytes = System.IO.File.ReadAllBytes(inputFile);
-                inputStream.Write(bytes, 0, bytes.Length);
-                inputStream.Seek(0, SeekOrigin.Begin);
+                ChannelCount = pcmInput.ChannelCount,
+                Samples = new List<List<double>>(),
+                SampleRate = pcmInput.SampleRate,
+            };
+            for (int i = 0; i < pcmOutput.ChannelCount; i++)
+            {
+                pcmOutput.Samples.Add(new List<double>());
             }
-
-            var pcmInput = AudioLibPCMFormat.RiffHeaderParse(inputStream, out _);
-            var pcmOutput = new AudioLibPCMFormat();
-            pcmOutput.CopyFrom(pcmInput);
 
             pluginContext.PluginCommandStub.SetSampleRate(pcmInput.SampleRate);
             pluginContext.PluginCommandStub.SetProcessPrecision(VstProcessPrecision.Process32);
 
-            // Write stub header
-            var audioStreamRiffOffset = pcmOutput.RiffHeaderWrite(outputStream, 0);
-
-            int bytesToTransfer = (int) Math.Min(
-                inputStream.Length - (long) audioStreamRiffOffset,
-                pcmOutput.ConvertTimeToBytes(1000 * AudioLibPCMFormat.TIME_UNIT)
-            );
-
             // hint: samples per buffer should be equal to pcmInput.SampleRate
-            int samplesPerBuffer = (int) Math.Round(bytesToTransfer / 2.0 / pcmOutput.NumberOfChannels);
+            int samplesPerBuffer = (int) pcmInput.SampleRate;
             pluginContext.PluginCommandStub.SetBlockSize(samplesPerBuffer);
 
             int inputCount = pluginContext.PluginInfo.AudioInputCount;
@@ -204,9 +195,9 @@ namespace VSTAudioProcessor.Process
             pluginContext.PluginCommandStub.MainsChanged(true);
             pluginContext.PluginCommandStub.StartProcess();
 
-            int bytesReadFromAudioStream;
-            byte[] byteBuffer = new byte[bytesToTransfer];
-            while ((bytesReadFromAudioStream = inputStream.Read(byteBuffer, 0, bytesToTransfer)) > 0)
+            for (int samplesOffset = 0;
+                samplesOffset < pcmInput.SamplesCount;
+                samplesOffset += (int) pcmInput.SampleRate)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -215,13 +206,13 @@ namespace VSTAudioProcessor.Process
 
                 var result = ProcessSingleBuffer(
                     pluginContext,
-                    byteBuffer,
-                    bytesReadFromAudioStream,
+                    samplesOffset,
                     vstBufIn,
                     vstBufOut,
                     vstBufIn2,
                     vstBufOut2,
                     isDoublePrecision,
+                    pcmInput,
                     pcmOutput,
                     inputCount,
                     outputCount,
@@ -232,23 +223,14 @@ namespace VSTAudioProcessor.Process
                 {
                     return result;
                 }
-
-                outputStream.Write(byteBuffer, 0, bytesReadFromAudioStream);
             }
 
+            // Close VST Context
             pluginContext.PluginCommandStub.StopProcess();
             pluginContext.PluginCommandStub.MainsChanged(false);
 
-            {
-                outputStream.Seek(0, SeekOrigin.Begin);
-                pcmOutput.RiffHeaderWrite(outputStream,
-                    (uint) (outputStream.Length - (long) audioStreamRiffOffset));
-
-                inputStream.Dispose();
-                var outputBytes = outputStream.ToArray();
-                outputStream.Dispose();
-                File.WriteAllBytes(outputFile, outputBytes);
-            }
+            // Save
+            pcmOutput.Save(outputFile);
 
             return 0;
         }
@@ -256,14 +238,14 @@ namespace VSTAudioProcessor.Process
 
         private static int ProcessSingleBuffer(
             IVstPluginContext pluginContext,
-            byte[] byteBuffer,
-            int bytesReadFromAudioStream,
+            int samplesOffset,
             VstAudioBuffer[] vstBufIn,
             VstAudioBuffer[] vstBufOut,
             VstAudioPrecisionBuffer[] vstBufIn2,
             VstAudioPrecisionBuffer[] vstBufOut2,
             bool isDoublePrecision,
-            AudioLibPCMFormat pcmOutput,
+            WAVParser pcmInput,
+            WAVParser pcmOutput,
             int vstInputCount,
             int vstOutputCount,
             int samplesPerBuffer
@@ -285,11 +267,11 @@ namespace VSTAudioProcessor.Process
             }
 
             result = ProcessSingleBufferFillBufferInput(
-                byteBuffer,
-                bytesReadFromAudioStream,
+                samplesOffset,
                 vstBufIn,
                 vstBufIn2,
                 isDoublePrecision,
+                pcmInput,
                 pcmOutput,
                 vstOutputCount
             );
@@ -308,8 +290,6 @@ namespace VSTAudioProcessor.Process
             }
 
             result = ProcessSingleBufferFillByteBuffer(
-                byteBuffer,
-                bytesReadFromAudioStream,
                 vstBufOut,
                 vstBufOut2,
                 isDoublePrecision,
@@ -367,71 +347,45 @@ namespace VSTAudioProcessor.Process
         /// <summary>
         /// Read 2-bytes octets from byteBuffer and put them to VstAudioBuffer
         /// </summary>
-        /// <param name="byteBuffer"></param>
-        /// <param name="bytesReadFromAudioStream"></param>
+        /// <param name="samplesOffset"></param>
         /// <param name="vstBufIn"></param>
         /// <param name="vstBufIn2"></param>
         /// <param name="isDoublePrecision"></param>
+        /// <param name="pcmInput"></param>
         /// <param name="pcmOutput"></param>
         /// <param name="vstOutputCount"></param>
         /// <returns></returns>
         private static int ProcessSingleBufferFillBufferInput(
-            byte[] byteBuffer,
-            int bytesReadFromAudioStream,
+            int samplesOffset,
             IReadOnlyList<VstAudioBuffer> vstBufIn,
             IReadOnlyList<VstAudioPrecisionBuffer> vstBufIn2,
             bool isDoublePrecision,
-            AudioLibPCMFormat pcmOutput,
+            WAVParser pcmInput,
+            WAVParser pcmOutput,
             int vstOutputCount
         )
         {
-            var iSample = 0;
-            for (int i = 0; i < bytesReadFromAudioStream; iSample++)
+            for (int i = samplesOffset;
+                i < Math.Min(pcmInput.SamplesCount, samplesOffset + pcmInput.SampleRate);
+                i++)
             {
-                for (int channel = 0; channel < pcmOutput.NumberOfChannels; channel++)
+                var iSample = i - samplesOffset;
+                for (int channel = 0; channel < pcmOutput.ChannelCount; channel++)
                 {
-                    if (i + 1 >= bytesReadFromAudioStream)
-                    {
-                        break;
-                    }
-
-                    var sample = BitConverter.ToInt16(byteBuffer, i);
-                    i += 2;
-
                     if (channel >= vstOutputCount)
                     {
                         continue;
                     }
 
+                    double sample = pcmInput.Samples[channel][i];
+
                     if (!isDoublePrecision)
                     {
-                        float sampleF = sample / 32768f;
-                        if (sampleF > 1.0f)
-                        {
-                            sampleF = 1.0f;
-                        }
-
-                        if (sampleF < -1.0f)
-                        {
-                            sampleF = -1.0f;
-                        }
-
-                        vstBufIn[channel][iSample] = sampleF;
+                        vstBufIn[channel][iSample] = (float) sample;
                     }
                     else
                     {
-                        double sampleD = sample / 32768d;
-                        if (sampleD > 1.0d)
-                        {
-                            sampleD = 1.0d;
-                        }
-
-                        if (sampleD < -1.0d)
-                        {
-                            sampleD = -1.0d;
-                        }
-
-                        vstBufIn2[channel][iSample] = sampleD;
+                        vstBufIn2[channel][iSample] = sample;
                     }
                 }
             } // int i = 0; i < bytesReadFromAudioStream
@@ -440,68 +394,31 @@ namespace VSTAudioProcessor.Process
         }
 
         private static int ProcessSingleBufferFillByteBuffer(
-            byte[] byteBuffer,
-            int bytesReadFromAudioStream,
             IReadOnlyList<VstAudioBuffer> vstBufOut,
             IReadOnlyList<VstAudioPrecisionBuffer> vstBufOut2,
             bool isDoublePrecision,
-            AudioLibPCMFormat pcmOutput,
+            WAVParser pcmOutput,
             int vstOutputCount,
             int samplesPerBuffer
         )
         {
-            int iByte = 0;
-            Array.Clear(byteBuffer, 0, byteBuffer.Length);
             for (var iSample = 0; iSample < samplesPerBuffer; iSample++)
             {
-                for (int channel = 0; channel < pcmOutput.NumberOfChannels; channel++)
+                for (int channel = 0; channel < pcmOutput.ChannelCount; channel++)
                 {
-                    short sample = 0;
-
                     if (channel < vstOutputCount)
                     {
                         if (!isDoublePrecision)
                         {
                             float sampleF = vstBufOut[channel][iSample];
-                            sampleF *= 32768f;
-                            if (sampleF > short.MaxValue)
-                            {
-                                sampleF = short.MaxValue;
-                            }
-
-                            if (sampleF < short.MinValue)
-                            {
-                                sampleF = short.MinValue;
-                            }
-
-                            sample = (short) Math.Round(sampleF);
+                            pcmOutput.Samples[channel].Add(sampleF);
                         }
                         else
                         {
                             double sampleD = vstBufOut2[channel][iSample];
-                            sampleD *= 32768d;
-                            if (sampleD > short.MaxValue)
-                            {
-                                sampleD = short.MaxValue;
-                            }
-
-                            if (sampleD < short.MinValue)
-                            {
-                                sampleD = short.MinValue;
-                            }
-
-                            sample = (short) Math.Round(sampleD);
+                            pcmOutput.Samples[channel].Add(sampleD);
                         }
                     }
-
-                    if (iByte + 1 >= bytesReadFromAudioStream)
-                    {
-                        break;
-                    }
-
-                    byte[] sampleBytes = BitConverter.GetBytes(sample);
-                    Array.Copy(sampleBytes, 0, byteBuffer, iByte, 2);
-                    iByte += 2;
                 }
             }
 

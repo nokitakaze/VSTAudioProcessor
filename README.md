@@ -50,6 +50,3 @@ This application WILL NEVER support any other media type except RIFF files, beca
 ![](https://cdn.discordapp.com/attachments/568223142724763652/705420220398960650/Home_VSTLogoAlpha92x54.png)
 
 VST is a trademark of Steinberg Media Technologies GmbH.
-
-AudioLib is a intellectual property of Daniel Weck ( https://github.com/danielweck ) and DAISY Consortium.
-
