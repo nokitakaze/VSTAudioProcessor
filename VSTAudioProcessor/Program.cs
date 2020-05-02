@@ -48,7 +48,7 @@ namespace VSTAudioProcessor
         private static void consoleCtrlC(object obj, ConsoleCancelEventArgs param)
         {
             CancellationTokenSource.Cancel();
-            Console.WriteLine("{0}\tUnloading", DateTime.Now.ToUniversalTime());
+            Console.WriteLine("{0}\tCancel", DateTime.Now.ToUniversalTime());
         }
     }
 }

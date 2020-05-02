@@ -298,16 +298,6 @@ namespace VSTAudioProcessor.Process
                 return result;
             }
 
-            {
-                var t = new List<float>();
-                for (int i = 0; i < samplesPerBuffer; i++)
-                {
-                    t.Add(vstBufIn[0][i]);
-                }
-
-                Console.WriteLine(t);
-            }
-
             if (isDoublePrecision)
             {
                 pluginContext.PluginCommandStub.ProcessReplacing(vstBufIn2, vstBufOut2);

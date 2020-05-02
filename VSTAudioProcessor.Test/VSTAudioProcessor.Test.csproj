@@ -33,8 +33,8 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="Jacobi.Vst.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\vst.net\Source\Code\_SharedAssemblies\Jacobi.Vst.Core.dll</HintPath>
+        <Reference Include="Jacobi.Vst.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=fa678e13c1efc859">
+          <HintPath>..\packages\VST.NET.x64.1.1\lib\net40\Jacobi.Vst.Core.dll</HintPath>
         </Reference>
         <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
@@ -66,7 +66,6 @@
         <Compile Include="Dialog\VSTSettingsTest.cs" />
         <Compile Include="Process\FxbReaderTest.cs" />
         <Compile Include="Process\PluginStub.cs" />
-        <Compile Include="Tests.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

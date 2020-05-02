@@ -40,23 +40,6 @@ VSTAudioProcessor.exe ... --input temporary.wav --output temporary.out.wav
 ffmpeg -i temporary.out.wav -c:a aac -q:a 5 output.aac
 ```
 
-## Building
-It IS NOT possible to compile this application as .Net Core, because of using C++ lib.
-
-If you want to build this application you should to this:
-
-```bash
-git clone https://github.com/nokitakaze/vst.net
-cd vst.net
-git checkout self_compile
-cd ..
-git clone https://github.com/nokitakaze/VSTAudioProcessor
-```
-
-I was forced to fork original VST.Net package.
-
-Now you could open the solution `VSTAudioProcessor\VSTAudioProcessor.sln` and build application.
-
 ## TODO
 Split this package to separate VST Host and FXB/FXP file processor, and then publish it as .Net Core Nuget package.
 

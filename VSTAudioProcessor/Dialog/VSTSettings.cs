@@ -153,7 +153,7 @@ namespace VSTAudioProcessor.Dialog
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine(e);
+                Console.Error.WriteLine("Exception: {0}", e);
                 return innerCodeOffset;
             }
 
@@ -182,7 +182,7 @@ namespace VSTAudioProcessor.Dialog
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine(e);
+                Console.Error.WriteLine("Exception: {0}", e);
                 return innerCodeOffset;
             }
 
