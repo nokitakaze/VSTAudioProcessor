@@ -1,7 +1,9 @@
 image: Visual Studio 2019
 
 build_script:
-  - ps: .\appveyor.cmd
+  - ps: Get-Location
+  - ps: Start-FileDownload 'https://static.kvraudio.com/files/3148/orilriver_win203.zip'
+  - ps: Expand-Archive -LiteralPath orilriver_win203.zip
   - dotnet restore
 
 after_build:
