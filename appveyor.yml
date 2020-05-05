@@ -6,5 +6,6 @@ build_script:
   - ps: Expand-Archive -LiteralPath orilriver_win203.zip
 
 after_build:
-  - dir orilriver_win203
-  - xunit.console.clr4 VSTAudioProcessor.Test /appveyor
+#  - dir orilriver_win203
+  - msbuild VSTAudioProcessor.Test
+  - xunit.console.clr4 ./VSTAudioProcessor.Test/bin/Debug/VSTAudioProcessor.Test.dll /appveyor
