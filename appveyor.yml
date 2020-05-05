@@ -2,7 +2,7 @@ image: Visual Studio 2019
 
 build_script:
   - ps: Get-Location
-  - ps: Start-FileDownload 'https://static.kvraudio.com/files/3148/orilriver_win203.zip'
+  - ps: Start-FileDownload 'https://nktkz.s3.eu-central-1.amazonaws.com/development/github/VSTAudioProcessor/orilriver_win203.zip'
   - ps: Expand-Archive -LiteralPath orilriver_win203.zip
   - dotnet restore
 
