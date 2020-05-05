@@ -1,11 +1,20 @@
 image: Visual Studio 2019
 
-build_script:
+cache:
+  - packages -> **\packages.config
+
+platform: x64
+
+configuration: Debug
+
+install:
   - ps: Get-Location
-  - ps: Start-FileDownload 'https://nktkz.s3.eu-central-1.amazonaws.com/development/github/VSTAudioProcessor/orilriver_win203.zip'
-  - ps: Expand-Archive -LiteralPath orilriver_win203.zip
-  - nuget restore
-  - msbuild VSTAudioProcessor.Test
+#  - ps: Start-FileDownload 'https://nktkz.s3.eu-central-1.amazonaws.com/development/github/VSTAudioProcessor/orilriver_win203.zip'
+#  - ps: Expand-Archive -LiteralPath orilriver_win203.zip
+
+#build_script:
+#  - nuget restore
+#  - msbuild VSTAudioProcessor.Test
 
 test:
   # only assemblies to test
@@ -17,3 +26,4 @@ test:
 #after_build:
 ##  - dir orilriver_win203
 #  - xunit.console.clr4 ./VSTAudioProcessor.Test/bin/Debug/VSTAudioProcessor.Test.dll /appveyor
+
