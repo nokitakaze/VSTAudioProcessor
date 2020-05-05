@@ -12,8 +12,10 @@ install:
 #  - ps: Start-FileDownload 'https://nktkz.s3.eu-central-1.amazonaws.com/development/github/VSTAudioProcessor/orilriver_win203.zip'
 #  - ps: Expand-Archive -LiteralPath orilriver_win203.zip
 
+before_build:
+  - nuget restore
+
 #build_script:
-#  - nuget restore
 #  - msbuild VSTAudioProcessor.Test
 
 test:
