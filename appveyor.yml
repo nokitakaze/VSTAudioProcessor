@@ -19,7 +19,7 @@ before_build:
 #  - msbuild VSTAudioProcessor.Test
 
 after_build:
-  - dir VSTAudioProcessor.Test\bin\Debug\*.dll
+  - dir VSTAudioProcessor.Test\bin\x64\Debug\*.dll
 
 test:
   assemblies:
