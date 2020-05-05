@@ -3,7 +3,7 @@ image: Visual Studio 2019
 cache:
   - packages -> **\packages.config
 
-platform: x64
+platform: Any CPU
 
 configuration: Debug
 
