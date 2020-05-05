@@ -5,8 +5,15 @@ build_script:
   - ps: Start-FileDownload 'https://nktkz.s3.eu-central-1.amazonaws.com/development/github/VSTAudioProcessor/orilriver_win203.zip'
   - ps: Expand-Archive -LiteralPath orilriver_win203.zip
   - nuget restore
-
-after_build:
-#  - dir orilriver_win203
   - msbuild VSTAudioProcessor.Test
-  - xunit.console.clr4 ./VSTAudioProcessor.Test/bin/Debug/VSTAudioProcessor.Test.dll /appveyor
+
+test:
+  # only assemblies to test
+  assemblies:
+    only:
+      - test-assembly-A.dll
+      - '**\*.tests.dll'
+
+#after_build:
+##  - dir orilriver_win203
+#  - xunit.console.clr4 ./VSTAudioProcessor.Test/bin/Debug/VSTAudioProcessor.Test.dll /appveyor
