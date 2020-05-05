@@ -12,7 +12,7 @@ test:
   assemblies:
     only:
       - test-assembly-A.dll
-      - '**\*.tests.dll'
+      - '**\*.test.dll'
 
 #after_build:
 ##  - dir orilriver_win203
